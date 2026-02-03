@@ -47,6 +47,12 @@
     -webkit-font-smoothing: antialiased;
   }
   
+  body.locked {
+    overflow: hidden;       /* hide both vertical & horizontal scroll */
+    position: fixed;        /* lock body in place */
+    width: 100%;            /* prevent layout shift */
+  }
+
   .page {
     max-width: 1100px;
     margin: 0 auto;
@@ -91,9 +97,9 @@
     line-height: 1.3;
   }
   
-  h1 { font-size: 2.75rem; margin-bottom: 20px; }
-  h2 { font-size: 2rem; margin-bottom: 18px; }
-  h3 { font-size: 1.5rem; margin-bottom: 16px; }
+  h1 { font-size: 2.75rem; margin-bottom: 20px; scroll-margin: 25vh;}
+  h2 { font-size: 2rem; margin-bottom: 18px; scroll-margin: 25vh;}
+  h3 { font-size: 1.5rem; margin-bottom: 16px; scroll-margin: 25vh;}
   
   p {
     margin-bottom: 20px;
