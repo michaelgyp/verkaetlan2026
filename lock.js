@@ -1,64 +1,50 @@
-(function () {
-  const overlay = document.getElementById("lock-overlay");
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-  if (!overlay) {
-    console.error("No overlay");
-    return;
-  }
+const client = createClient(
+  "https://rtiddewyylgihlgsugmi.supabase.co",
+  "sb_publishable_fLwMwlg1k5QC5z1fOf81eg_3YiQln25"
+);
 
-  // Hide overlay (unlock)
-  const hideOverlay = () => {
-    overlay.classList.add("lock-overlay--hidden");
-    document.body.classList.remove("locked"); // allow scrolling
-    setTimeout(() => {
-      overlay.style.display = "none";
-    }, 240);
-  };
+const overlay = document.getElementById("lock-overlay");
 
-  // Show overlay (lock)
-  const showOverlay = () => {
-    overlay.style.display = "flex"; // ensure it becomes visible
-    overlay.classList.remove("lock-overlay--hidden");
-    document.body.classList.add("locked"); // disable scrolling
-  };
-
-  // Initialize Supabase client
-  const SUPABASE_URL = "https://rtiddewyylgihlgsugmi.supabase.co"; // replace with your project URL
-  const SUPABASE_ANON_KEY = "sb_publishable_fLwMwlg1k5QC5z1fOf81eg_3YiQln25"; // replace with your publishable anon key
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  const checkConfig = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("site_config")
-        .select("isOpen")
-        .eq("id", 1)
-        .single();
-
-      if (error) {
-        console.error("Supabase error:", error);
-        return;
-      }
-
-      if (!data) return;
-
-      if (data.isOpen === true) {
-        hideOverlay();
-      } else {
-        showOverlay();
-      }
-    } catch (e) {
-      console.error("Could not fetch config from Supabase", e);
-    }
-  };
-
-  // Run on page load
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", checkConfig);
+// Helper to handle the UI toggle
+const toggleOverlay = (isOpen) => {
+  if (isOpen) {
+    overlay.style.display = "none";
+    document.body.classList.remove("locked");
   } else {
-    checkConfig();
+    overlay.style.display = "flex";
+    document.body.classList.add("locked");
   }
+};
 
-  // Optional: poll every 5 seconds for live updates
-  setInterval(checkConfig, 5000);
-})();
+async function init() {
+  // 1. Get the initial state
+  const { data, error } = await client
+    .from("site_config")
+    .select("isOpen")
+    .eq("id", 1)
+    .maybeSingle();
+
+  if (data) toggleOverlay(data.isOpen);
+
+  // 2. Subscribe to changes
+  client
+    .channel('site_status')
+    .on(
+      'postgres_changes', 
+      { 
+        event: 'UPDATE', 
+        schema: 'public', 
+        table: 'site_config', 
+        filter: 'id=eq.1' 
+      }, 
+      (payload) => {
+        console.log('Change received!', payload);
+        toggleOverlay(payload.new.isOpen);
+      }
+    )
+    .subscribe();
+}
+
+init();
