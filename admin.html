@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stýring | Skipan</title>
+    <style>
+        :root {
+            --bg: #050816;
+            --bg-elevated: #0b1020;
+            --text: #e5e7eb;
+            --text-soft: #9ca3af;
+            --accent: #38bdf8;
+            --accent-strong: #0ea5e9;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --transition-med: 280ms ease-out;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: radial-gradient(circle at top, #0b1120 0, #020617 55%, #000 100%);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .admin-card {
+            max-width: 400px;
+            width: 90%;
+            background: radial-gradient(circle at top left, #0f172a, #020617 70%);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: 0 28px 70px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 24px;
+            transition: all var(--transition-med);
+            opacity: 0; /* For the fade-in effect */
+        }
+
+        .status-badge.visible {
+            opacity: 1;
+        }
+
+        .status-badge.online { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .status-badge.offline { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+        h2 { margin-bottom: 8px; font-weight: 700; }
+        p { color: var(--text-soft); font-size: 0.9rem; margin-bottom: 32px; }
+        
+        input, .btn-toggle {
+            box-sizing: border-box;
+            display: block;
+            width: 100%;
+        }
+
+        input {
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: white;
+            margin-bottom: 16px;
+            outline: none;
+            font-size: 1rem;
+            transition: border var(--transition-med);
+        }
+
+        input:focus { border-color: var(--accent); }
+
+        .btn-toggle {
+            padding: 14px;
+            background: var(--accent);
+            color: #000;
+            font-weight: 700;
+            font-size: 1rem;
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: transform var(--transition-med), background var(--transition-med);
+        }
+
+        .btn-toggle:hover {
+            background: var(--accent-strong);
+            transform: translateY(-2px);
+        }
+
+        .btn-toggle:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+    <div class="admin-card">
+        <div id="status-badge" class="status-badge">Kanna eftir...</div>
+        <h2>Stýring</h2>
+        <p>Broyt støðuna á heimasíðuni her.</p>
+
+        <input type="password" id="admin-pass" placeholder="Loyniorð">
+        <button id="toggle-btn" class="btn-toggle">Dagfør støðu</button>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+        const client = createClient(
+            "https://rtiddewyylgihlgsugmi.supabase.co",
+            "sb_publishable_fLwMwlg1k5QC5z1fOf81eg_3YiQln25"
+        );
+
+        const badge = document.getElementById('status-badge');
+        const toggleBtn = document.getElementById('toggle-btn');
+        const passInput = document.getElementById('admin-pass');
+        let currentStatus = false;
+
+        async function fetchStatus() {
+            const { data } = await client.from('site_config').select('isOpen').eq('id', 1).single();
+            if (data) {
+                currentStatus = data.isOpen;
+                badge.innerText = currentStatus ? "● Síðan er opin" : "● Síðan er læst";
+                badge.className = `status-badge visible ${currentStatus ? 'online' : 'offline'}`;
+            }
+        }
+
+        toggleBtn.onclick = async () => {
+            const enteredPass = passInput.value;
+
+            // 1. Heinta loyniorð úr dátugrunninum
+            const { data: secretData } = await client
+                .from('site_secrets')
+                .select('key_value')
+                .eq('key_name', 'admin_password')
+                .single();
+
+            if (!secretData || enteredPass !== secretData.key_value) {
+                alert("Skeivt loyniorð.");
+                return;
+            }
+
+            // 2. Dagfør støðu
+            const { error } = await client
+                .from('site_config')
+                .update({ isOpen: !currentStatus })
+                .eq('id', 1);
+
+            if (!error) {
+                passInput.value = ""; 
+                fetchStatus();
+            } else {
+                alert("Feilur: " + error.message);
+            }
+        };
+
+        fetchStatus();
+    </script>
+</body>
+</html>
