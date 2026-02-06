@@ -1,4 +1,4 @@
-# verkaetlan-2026 – Kunningarheimasíða um føroyskt mál
+# Verkaetlan-2026 – Kunningarheimasíða um føroyskt mál
 
 Statisk, mobile-first heimasíða um føroyska málið, bygd til GitHub Pages.
 
@@ -18,25 +18,25 @@ Heimasíðan inniheldur 9 greinir um føroyska málið:
 
 ## Bygning
 
-- `index.html` – aðalsíða við øllum innihaldi
+- `index.html` – aðalsíða við øllum innihaldinum
 - `styles.css` – visuelt snið
-- `lock.js` – lásamekanisma, ið lesur `data/config.json`
-- `data/config.json` – stilling fyri at læsa/latna upp síðuna
+- `lock.js` – lásamekanisma, ið lesur frá einum dátugrunni í Supabase
+- `admin.html` – síða til at stýra aðalsíðuni
 
 ## Lásamekanisma
 
-Síðan er læst við default. Til at lata hana upp:
+Síðan er læst sum standard. Til at lata hana upp:
 
-1. Opna `data/config.json` í GitHub
-2. Broyta `"isOpen": false` til `"isOpen": true`
-3. Commit broytingina
+1. Far inn á /admin.html
+2. Set inn loynitalið
+3. Trýst á knappin
 
-Eftir at GitHub Pages hevur bygt aftur (vanliga eftir fáum minuttum), verður síðan sýnilig fyri øll.
+Eftir at dátan í dátugrunninum er dagførd, verður aðalsíðan dagførd sjálvvirkandi.
 
 ## Mál
 
-Øll tekstur á heimasíðuni er á føroyskum.
+Allur tekstur á heimasíðuni er á føroyskum.
 
 ## Hosting
 
-Heimasíðan er 100% statisk og virkar perfekt á GitHub Pages.
+Heimasíðan er 100% statisk og virkar fullkomiliga á GitHub Pages.
