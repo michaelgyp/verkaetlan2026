@@ -27,7 +27,7 @@ Heimasíðan inniheldur 9 greinir um føroyska málið:
 
 Síðan er læst sum standard. Til at lata hana upp:
 
-1. Far inn á /admin.html
+1. Far inn á `/admin.html`
 2. Set inn loynitalið
 3. Trýst á knappin
 
