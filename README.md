@@ -19,19 +19,7 @@ Heimasíðan inniheldur 9 greinir um føroyska málið:
 ## Bygning
 
 - `index.html` – aðalsíða við øllum innihaldinum
-- `styles.css` – visuelt snið
-- `lock.js` – lásamekanisma, ið lesur frá einum dátugrunni í Supabase
-- `admin.html` – síða til at stýra aðalsíðuni
-
-## Lásamekanisma
-
-Síðan er læst sum standard. Til at lata hana upp:
-
-1. Far inn á `/admin.html`
-2. Set inn loynitalið
-3. Trýst á knappin
-
-Eftir at dátan í dátugrunninum er dagførd, verður aðalsíðan dagførd sjálvvirkandi.
+- `styles.css` og `app.js` – visuelt snið
 
 ## Mál
 
