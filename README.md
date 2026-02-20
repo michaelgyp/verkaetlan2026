@@ -23,16 +23,6 @@ Heimasíðan inniheldur 9 greinir um føroyska málið:
 - `lock.js` – lásamekanisma, ið lesur frá einum dátugrunni í Supabase
 - `admin.html` – síða til at stýra aðalsíðuni
 
-## Lásamekanisma
-
-Síðan er læst sum standard. Til at lata hana upp:
-
-1. Far inn á /admin.html
-2. Set inn loynitalið
-3. Trýst á knappin
-
-Eftir at dátan í dátugrunninum er dagførd, verður aðalsíðan dagførd sjálvvirkandi.
-
 ## Mál
 
 Allur tekstur á heimasíðuni er á føroyskum.
